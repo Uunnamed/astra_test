@@ -1,14 +1,47 @@
 ---
-const branch = 'main';
+import { getPage } from '../lib/wp.js';
+import { sectionTypes } from '../sections/index.js';
+
+const page = await getPage('home');
+
+// Content may only use section types that have a component in this build.
+const unknown = [...new Set(page.sections.map((section) => section.acf_fc_layout))].filter(
+  (name) => !sectionTypes[name],
+);
+if (unknown.length > 0) {
+  throw new Error(`No component for section type(s): ${unknown.join(', ')}`);
+}
+
+// Set by Cloudflare Workers Builds; absent in a local build.
+const branch = process.env.WORKERS_CI_BRANCH ?? 'local';
 ---
 <html lang="ru">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>Astra test</title>
+    <title>{page.title} | Astra test</title>
   </head>
   <body>
-    <h1>Astra test</h1>
-    <p>Ветка: {branch}</p>
+    {
+      page.sections.map((section) => {
+        const Section = sectionTypes[section.acf_fc_layout];
+        return <Section {...section} />;
+      })
+    }
+    <footer>
+      Ветка: {branch} · Хеш контента: {page.hash} · Изменено в WordPress: {page.modified} UTC
+    </footer>
   </body>
 </html>
+
+<style>
+  body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+  }
+  footer {
+    padding: 1rem 1.5rem;
+    color: #666;
+    font-size: 0.85rem;
+  }
+</style>

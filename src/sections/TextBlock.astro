@@ -1,0 +1,13 @@
+---
+const { heading, body } = Astro.props;
+---
+<section class="text-block">
+  {heading && <h2>{heading}</h2>}
+  <div set:html={body} />
+</section>
+
+<style>
+  .text-block {
+    padding: 2rem 1.5rem;
+  }
+</style>

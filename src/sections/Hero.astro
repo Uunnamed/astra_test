@@ -1,0 +1,24 @@
+---
+const { title, text, button_label, button_url } = Astro.props;
+---
+<section class="hero">
+  <h1>{title}</h1>
+  {text && <p>{text}</p>}
+  {button_label && button_url && <a href={button_url}>{button_label}</a>}
+</section>
+
+<style>
+  .hero {
+    padding: 3rem 1.5rem;
+    background: #10233f;
+    color: #fff;
+  }
+  .hero a {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.4rem;
+    background: #fff;
+    color: #10233f;
+    text-decoration: none;
+  }
+</style>
